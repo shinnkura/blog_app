@@ -44,6 +44,6 @@ services:
       links:
         - db
       ports:
-        - 8001:80
+        - 8080:80
       volumes:
         - /sessions
