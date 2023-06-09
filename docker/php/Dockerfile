@@ -1,23 +1,27 @@
-FROM php:8.2-fpm
-COPY php.ini /usr/local/etc/php/
+FROM php:8.1.16-fpm
 
-RUN apt-get update \
-  && apt-get install -y zlib1g-dev mariadb-client vim libzip-dev \
-  && docker-php-ext-install zip pdo_mysql
+# Viteのサーバーにローカルからアクセスするために開ける
+EXPOSE 5173
 
-#Composer install
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-RUN php composer-setup.php
-RUN php -r "unlink('composer-setup.php');"
-RUN mv composer.phar /usr/local/bin/composer
+# COPY php.ini
+COPY ./docker/php/php.ini /usr/local/etc/php/php.ini
 
-ENV COMPOSER_ALLOW_SUPERUSER 1
+# Composer install
+COPY --from=composer:2.5.4 /usr/bin/composer /usr/bin/composer
 
-ENV COMPOSER_HOME /composer
+# install Node.js
+COPY --from=node:18.14.2 /usr/local/bin /usr/local/bin
+COPY --from=node:18.14.2 /usr/local/lib /usr/local/lib
 
-ENV PATH $PATH:/composer/vendor/bin
+RUN apt-get update && \
+  apt-get -y install \
+  git \
+  zip \
+  unzip \
+  vim \
+  libpq-dev \
+  && docker-php-ext-install pdo_pgsql bcmath && \
+  pecl install xdebug && \
+  docker-php-ext-enable xdebug
 
-
-WORKDIR /var/www
-
-RUN composer global require "laravel/installer"
+WORKDIR /var/www/html

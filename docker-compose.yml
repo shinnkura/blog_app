@@ -1,49 +1,48 @@
+version: '3.8'
+
+volumes:
+  postgres-volume:
+
 services:
   app:
-    container_name: app
-    build: ./docker/php
-    volumes:
-      - .:/var/www
-
-  nginx:
-    image: nginx
-    container_name: nginx
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
     ports:
-      - 8000:80
+      - 5173:5173
+    depends_on:
+      - db
     volumes:
-      - .:/var/www
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-    working_dir: /var/www
+      - ./src/:/var/www/html
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_NAME}
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    ports:
+      - ${WEB_PORT}:80
     depends_on:
       - app
+    volumes:
+      - ./src/:/var/www/html
 
   db:
-    platform: linux/x86_64 # M1がmysglイメージに未対応なのでplatformを指定
-    image: mysql:5.7
-    container_name: db
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: database
-      MYSQL_USER: db-user
-      MYSQL_PASSWORD: db-pass
-      TZ: "Asia/Tokyo"
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    volumes:
-      - ./docker/db/data:/var/lib/mysql
-      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./docker/db/sql:/docker-entrypoint-initdb.d
+    build:
+      context: .
+      dockerfile: ./docker/postgres/Dockerfile
     ports:
-      - 3306:3306
-
-  phpmyadmin:
-      image: phpmyadmin/phpmyadmin
-      container_name: phpMyAdmin
-      environment:
-        - PMA_ARBITRARY=1
-        - PMA_HOST=db
-      links:
-        - db
-      ports:
-        - 8080:80
-      volumes:
-        - /sessions
+      - ${DB_PORT}:5432
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGTZ: 'Asia/Tokyo'
+    volumes:
+      - postgres-volume:/var/lib/postgresql
