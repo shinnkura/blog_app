@@ -15,7 +15,7 @@ DB_PASSWORD=
 
 **.env**
 
-```shl
+```sh
 WEB_PORT=80
 DB_PORT=5432
 
@@ -28,7 +28,7 @@ DB_PASSWORD=pass
 
 以下のコマンドで、Docker を立ち上げ、Laravel をインストールしてください。
 
-```shl
+```sh
 docker-compose up -d
 docker-compose exec app composer create-project --prefer-dist "laravel/laravel=10.*" .
 ```
@@ -37,7 +37,7 @@ docker-compose exec app composer create-project --prefer-dist "laravel/laravel=1
 
 app コンテナと db コンテナとの接続を確認する
 
-```shl
+```sh
 docker-compose exec app php artisan migrate
 ```
 
@@ -45,7 +45,7 @@ docker-compose exec app php artisan migrate
 
 Vue を動かすために必要なパッケージをインストールします
 
-```shl
+```sh
 docker-compose exec app npm install
 docker-compose exec app npm install --save-dev vue @vitejs/plugin-vue
 ```
@@ -54,7 +54,7 @@ docker-compose exec app npm install --save-dev vue @vitejs/plugin-vue
 
 src/vite.config.js に追記
 
-```shl
+```sh
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 
@@ -130,7 +130,7 @@ const message = ref("Hello World!");
 
 Vite の開発用サーバーを立ち上げる
 
-```shl
+```sh
 docker-compose exec app npm run dev
 ```
 
