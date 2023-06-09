@@ -4,7 +4,7 @@
 
 **.env.exapmle**
 
-```markdown
+```sh
 WEB_PORT=80
 DB_PORT=5432
 
