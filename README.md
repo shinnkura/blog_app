@@ -4,7 +4,7 @@
 
 **.env.exapmle**
 
-```shl
+```markdown
 WEB_PORT=80
 DB_PORT=5432
 
@@ -58,7 +58,7 @@ src/vite.config.js に追記
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 
-<span style="color: green;">+ import vue from '@vitejs/plugin-vue';</span>
++ import vue from '@vitejs/plugin-vue';
 
 
 export default defineConfig({
