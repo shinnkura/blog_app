@@ -1,3 +1,4 @@
+
 ## 環境変数の設定
 
 .env.example をコピーし、.env を同ディレクトリに作成してください。
@@ -20,7 +21,7 @@ WEB_PORT=80
 DB_PORT=5432
 
 DB_NAME=mydb
-DB_USER=yuto
+DB_USER=root
 DB_PASSWORD=pass
 ```
 
